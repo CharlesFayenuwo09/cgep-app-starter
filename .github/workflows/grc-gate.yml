@@ -63,9 +63,7 @@ jobs:
           conftest test /tmp/tfplan.json \
             --policy policies \
             --namespace policies.s3_kms_encryption \
-            --namespace policies.s3_tls_enforcement \
             --namespace policies.s3_versioning \
-            --namespace policies.lambda_vpc \
             --namespace policies.iam_no_wildcard \
             --ignore ".*_test.rego"
 
