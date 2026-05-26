@@ -13,7 +13,14 @@ terraform {
     random  = { source = "hashicorp/random", version = "~> 3.6" }
     archive = { source = "hashicorp/archive", version = "~> 2.4" }
   }
+
+  backend "s3" {
+    bucket = "acme-health-intake-evidence-5d2aa24b"
+    key    = "terraform/state/terraform.tfstate"
+    region = "us-east-1"
+  }
 }
+
 
 provider "aws" {
   region = var.aws_region
