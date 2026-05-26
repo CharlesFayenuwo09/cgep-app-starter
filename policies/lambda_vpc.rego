@@ -17,7 +17,7 @@ metadata := {
     "remediation": "Add vpc_config block to Lambda function with private subnet IDs and security group",
 }
 
-# Deny any Lambda function that is not configured inside a VPC
+# Only deny NEW Lambda functions being created without VPC config
 deny contains msg if {
     some resource in input.resource_changes
     resource.type == "aws_lambda_function"
