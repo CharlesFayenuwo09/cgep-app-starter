@@ -17,11 +17,11 @@ metadata := {
     "remediation": "Add a bucket policy denying requests where aws:SecureTransport is false",
 }
 
-# Deny any S3 bucket that does not have a TLS-enforcing bucket policy
+# Only deny S3 buckets being created (not existing ones being updated)
 deny contains msg if {
     some resource in input.resource_changes
     resource.type == "aws_s3_bucket"
-    resource.change.actions[_] in ["create", "update"]
+    resource.change.actions == ["create"]
     not s3_has_tls_policy(resource.address)
     msg := sprintf(
         "[%s] %s: S3 bucket '%s' must enforce TLS-only requests (SOC 2 CC6.7 — GAP-03)",

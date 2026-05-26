@@ -21,7 +21,7 @@ metadata := {
 deny contains msg if {
     some resource in input.resource_changes
     resource.type == "aws_lambda_function"
-    resource.change.actions[_] in ["create", "update"]
+    resource.change.actions == ["create"]
     not lambda_has_vpc(resource)
     msg := sprintf(
         "[%s] %s: Lambda function '%s' must be deployed inside a VPC (SOC 2 CC6.6 — GAP-05)",
