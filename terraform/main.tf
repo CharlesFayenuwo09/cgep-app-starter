@@ -212,8 +212,31 @@ resource "aws_lambda_function" "intake" {
     }
   }
 
-  # GAP-05: no vpc_config block. Learner expected to add one referencing
-  # aws_subnet.private[*] and a hardened security group.
+  # GAP-05 fix: Deploy Lambda inside VPC
+  # SOC 2 CC6.6 — network segmentation
+  vpc_config {
+    subnet_ids         = aws_subnet.private[*].id
+    security_group_ids = [aws_security_group.lambda.id]
+  }
+}
+
+# Security group for Lambda
+resource "aws_security_group" "lambda" {
+  name        = "${local.name_prefix}-lambda-sg-${local.suffix}"
+  description = "Security group for Lambda function"
+  vpc_id      = aws_vpc.main.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Control = "CC6.6"
+    Gap     = "GAP-05"
+  }
 }
 
 ######################################################################
@@ -308,7 +331,7 @@ resource "aws_s3_bucket_policy" "uploads_tls" {
         Effect    = "Deny"
         Principal = "*"
         Action    = "s3:*"
-        Resource  = [
+        Resource = [
           aws_s3_bucket.uploads.arn,
           "${aws_s3_bucket.uploads.arn}/*"
         ]
